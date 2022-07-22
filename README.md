@@ -86,14 +86,14 @@ Before executing an OTA update, you need to:
 - Start FrontEnd server to deploy this new bundle.
 
 ### How to generate a bundle ?
-The content of the bundle is a script in the bundle recipe `layers/meta-st/meta-st-ota/recipes-core/bundles/update-st-bundle-mp13.bb`
-The same file exists for MP15.
+The content of the bundle is a script in the bundle recipe `layers/meta-st/meta-st-ota/recipes-core/bundles/update-st-bundle-<board name>.bb`
+Where `<board name>` could be `stm32mp157f-ev1`, `stm32mp157f-dk2` or `stm32mp135f-dk`.
 
 The layer contains prebuilt certificates that need to be updated for production.
 
-Execute the following command to build the bundle:
+Execute the following command to build the bundle (example for MP13 disco board):
 ```
-bitbake update-st-bundle-mp13
+bitbake update-st-bundle-stm32mp135f-dk
 ```
 More information in [RAUC documentation](https://rauc.readthedocs.io/en/latest/integration.html#bundle-generation)
 
