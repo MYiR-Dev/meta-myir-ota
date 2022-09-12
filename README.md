@@ -6,7 +6,7 @@
 - It uses A/B mechanism concept : all updatable partitions are duplicated : for example, rootfs becomes rootfs-a and rootfs-b. When a software running on rootfs-a is notified to be upgraded, the new version is installed on rootfs-b, and then system reboots on rootfs-b which becomes the new active version.
 - The embedded client is [rauc](https://rauc.readthedocs.io/en/latest/) which get software updates from [Hawkbit](https://www.eclipse.org/hawkbit/) server. A glue layer called [rauc-hawkbit](https://github.com/rauc/rauc-hawkbit) polls the Hawkbit server to transmit new bundle to rauc.
 - This layer is based on [STM32MP1-ecosystem-v4.0.0 Release note](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v4.0.0) which also needs [rauc layer](https://github.com/rauc/meta-rauc).
-- Look at [Overall presentation](https://github.com/OpenSTLinux/meta-st-ota/blob/dunfell/files/doc/FOTA.pptx) first (slides based on MMDV-3.1.0 and still relevant)!
+- Look at [Overall presentation](https://github.com/PRG-MPU-CUST/meta-st-ota/blob/dunfell/files/doc/FOTA.pptx) first (slides based on MMDV-3.1.0 and still relevant)!
 
 
 ## Table of Contents
@@ -45,7 +45,7 @@ A STM32MP135F-DK or STM32MP157F-DK2 or STM32MP157F-EV1 is requested.
 cd <Yocto source tree>/layers
 git clone --branch kirkstone https://github.com/rauc/meta-rauc.git
 cd meta-st
-git clone --branch kirkstone https://github.com/OpenSTLinux/meta-st-ota.git
+git clone --branch kirkstone https://github.com/PRG-MPU-CUST/meta-st-ota.git
 ```
 ### Add the rauc related layer
 The meta-st-ota layer contains a new machine that request a license file to be checked.
