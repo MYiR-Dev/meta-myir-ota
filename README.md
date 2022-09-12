@@ -95,7 +95,14 @@ More information in [RAUC documentation](https://rauc.readthedocs.io/en/latest/i
 
 ### How to put in place the Hawkbit server ?
 As it was initialy planned to use Ostree, I started to use the Hawkbit Docker image built in FullMetalUpdate project.
-So, please following instructions in [FullMetalUpdate documentation](https://www.fullmetalupdate.io/docs/documentation/) to install it.
+So, please fetch [FullMetalUpdate](https://github.com/FullMetalUpdate/fullmetalupdate-cloud-demo) to install it:
+```
+git clone https://github.com/FullMetalUpdate/fullmetalupdate-cloud-demo.git
+cd fullmetalupdate-cloud-demo
+./StartServer.sh
+```
+When the server is started, you can connect to its web interface following this URL : http://localhost:8080/UI/login/#/ with Username=admin and Password=admin.
+
 The server configuration is done through the script `ConfigureServer.sh` that can be customized:
 ```
 curl -X POST \
