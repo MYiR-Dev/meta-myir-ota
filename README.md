@@ -61,10 +61,6 @@ cd <Yocto source tree>/build-openstlinuxweston-stm32mp1-ota/
 DISTRO=openstlinux-weston MACHINE=stm32mp1-ota source layers/meta-st/scripts/envsetup.sh
 bitbake-layers add-layer ../layers/meta-rauc/
 ```
-If add-layer command fails, you can do it manually by adding the following lines in build-openstlinuxweston-stm32mp1-ota/conf/bblayers.conf
-```
-ADDONSLAYERS += "${@'${OEROOT}/layers/meta-rauc' if os.path.isfile('${OEROOT}/layers/meta-rauc/conf/layer.conf') else ''}"
-```
 then, execute again `source layers/meta-st/scripts/envsetup.sh` from `<Yocto source tree>`.
 
 - The meta-rauc layer provides support for integrating the RAUC update tool into the device.
