@@ -13,6 +13,6 @@ fi
 rm $BOOT_TYPE
 
 
-#To disable bootcount, both active_index and previous_active_index have to be equal
-#This is done in cboot-script.sh called by rauc just after
+#To disable bootcount, "accepted" entry has to be true in metadata (in order to leave trial mode)
+#This is done in st-boot-script.sh called by rauc just after
 /usr/bin/rauc status mark-good

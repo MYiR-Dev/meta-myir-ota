@@ -133,6 +133,7 @@ with fileinput.FileInput("%s/%s" % (dirName, mount_partition_file), inplace=True
 umount(dirName)
 rmdir(dirName)
 
-# Update metadata partition to switch to the next boot partition
-subprocess.Popen(["/usr/lib/fwu/update_metadata.sh", "%d" % boot_part_num_dico[next_boot_type], "%d" % boot_part_num_dico[current_boot_type]])
+# Update metadata partition to switch to the next boot partition and configure next boot partition in trial state
+# bootcount is already initialized on previous non trial boot
+subprocess.Popen(["/usr/lib/fwu/update_metadata.sh", "%d" % boot_part_num_dico[next_boot_type], "%d" % boot_part_num_dico[current_boot_type], "refuse"])
 

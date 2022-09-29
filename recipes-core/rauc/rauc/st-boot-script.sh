@@ -1,18 +1,18 @@
 #/bin/bash
-# To disable bootcount, both active_index and previous_active_index have to be equal
+# At this stage, we can consider the new image has successfully boot, so the bootcount can be disabled.
+# To disable it, "accepted" entry has to be true in metadata (in order to leave trial mode)
 
 arg1=$1
-arg2=$2
 
 if [ "$arg1" = "get-primary" ]
 then
     cat /proc/cmdline | grep "rauc.slot=A"
     if test $? == 0
     then
-        /usr/lib/fwu/update_metadata.sh 0 0
+        /usr/lib/fwu/update_metadata.sh 0 0 accept
         echo "A"
     else
-        /usr/lib/fwu/update_metadata.sh 1 1
+        /usr/lib/fwu/update_metadata.sh 1 1 accept
         echo "B"
     fi
     exit 0
