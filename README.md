@@ -44,7 +44,10 @@ A STM32MP135F-DK or STM32MP157F-DK2 or STM32MP157F-EV1 is requested.
 ```
 cd <Yocto source tree>/layers
 git clone --branch kirkstone https://github.com/rauc/meta-rauc.git
-cd meta-st
+cd meta-rauc
+git reset --hard 2c07f828924c6e522925544ec51900935be23703
+
+cd <Yocto source tree>/layers/meta-st
 git clone --branch kirkstone https://github.com/PRG-MPU-CUST/meta-st-ota.git
 ```
 ### Add the rauc related layer
