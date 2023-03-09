@@ -23,7 +23,6 @@ max-bundle-download-size=805306368
 path=/etc/rauc/ca.cert.pem
 
 [handlers]
-pre-install=/usr/lib/rauc/pre-install.sh
 post-install=/usr/lib/rauc/post-install.sh
 bootloader-custom-backend=/usr/lib/rauc/st-boot-script.sh
 
