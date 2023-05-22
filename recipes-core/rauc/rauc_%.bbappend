@@ -16,8 +16,3 @@ do_install:append () {
 	install -Dm 0755 ${WORKDIR}/st-boot-script.sh ${D}${libdir}/rauc/st-boot-script.sh
 	install -Dm 0755 ${WORKDIR}//system.conf.emmc ${D}${sysconfdir}/rauc/system.conf.emmc
 }
-
-python () {
-    d.delVar("RDEPENDS:%s" % d.getVar('PN'))
-    d.appendVar("RDEPENDS:%s" % d.getVar('PN'), " devmem2")
-}

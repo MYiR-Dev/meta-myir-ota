@@ -6,6 +6,5 @@ IMAGE_INSTALL:append = "     \
     rauc-hawkbit             \
     rauc-hawkbit-service     \
     rauc-service             \
-    devmem2                  \
     fwu-gen-metadata         \
 "
