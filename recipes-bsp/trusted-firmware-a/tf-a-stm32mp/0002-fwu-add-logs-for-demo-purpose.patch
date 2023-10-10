@@ -1,36 +1,36 @@
-From ac759b5e625105c15153e2561d564e07701969cc Mon Sep 17 00:00:00 2001
+From 6cd341b60f816e3e1b3aab1d739e4046b515668b Mon Sep 17 00:00:00 2001
 From: Christophe Guibout <christophe.guibout@st.com>
-Date: Thu, 7 Apr 2022 16:15:50 +0200
+Date: Thu, 5 Oct 2023 15:11:35 +0200
 Subject: [PATCH 2/2] fwu: add logs for demo purpose
 
-Change-Id: I4e68bbc512ac0e52af825fa1510706c765bd508d
+# Conflicts:
+#	plat/st/common/bl2_io_storage.c
 ---
- plat/st/common/bl2_io_storage.c     | 1 +
- plat/st/stm32mp1/stm32mp1_private.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ plat/st/common/bl2_io_storage.c | 1 +
+ plat/st/common/stm32mp_common.c | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/plat/st/common/bl2_io_storage.c b/plat/st/common/bl2_io_storage.c
-index f6c9ef2ad..46e5bbaaa 100644
+index 31d237e96..4dc872c28 100644
 --- a/plat/st/common/bl2_io_storage.c
 +++ b/plat/st/common/bl2_io_storage.c
-@@ -641,6 +641,7 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
+@@ -776,6 +776,7 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
  	io_block_spec_t *image_spec;
  
  	boot_idx = plat_fwu_get_boot_idx();
-+	INFO("fwu active_index is %d\n", boot_idx);
- 	stm32_save_boot_mode((boot_idx == 1U) ? BOOT_RECOVERY : BOOT_NORMAL);
++	INFO("fwu active_index is %u\n", boot_idx);
  	assert(boot_idx < NR_OF_FW_BANKS);
  
-diff --git a/plat/st/stm32mp1/stm32mp1_private.c b/plat/st/stm32mp1/stm32mp1_private.c
-index 6f5a2edcd..e77805822 100644
---- a/plat/st/stm32mp1/stm32mp1_private.c
-+++ b/plat/st/stm32mp1/stm32mp1_private.c
-@@ -957,7 +957,7 @@ uint32_t stm32_get_and_dec_fwu_trial_boot_cnt(void)
- 				   (try_cnt - 1U) << TAMP_BOOT_FWU_INFO_CNT_OFF);
+ 	for (i = 0U; i < NR_OF_IMAGES_IN_FW_BANK; i++) {
+diff --git a/plat/st/common/stm32mp_common.c b/plat/st/common/stm32mp_common.c
+index d418608aa..21ddba4e3 100644
+--- a/plat/st/common/stm32mp_common.c
++++ b/plat/st/common/stm32mp_common.c
+@@ -496,6 +496,7 @@ uint32_t stm32_get_and_dec_fwu_trial_boot_cnt(void)
  	}
- 	clk_disable(RTCAPB);
--
-+	INFO("fwu bootcount %d\n", try_cnt);
+ 	clk_disable(TAMP_BKP_REG_CLK);
+ 
++	INFO("fwu bootcount %u\n", try_cnt);
  	return try_cnt;
  }
  

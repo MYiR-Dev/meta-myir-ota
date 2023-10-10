@@ -1,11 +1,9 @@
-From a5cddc65c16071dc202da7840610b53b2744f8b0 Mon Sep 17 00:00:00 2001
+From c0305b5775b4b6367744308f750dd8d5c9978dc1 Mon Sep 17 00:00:00 2001
 From: Christophe Guibout <christophe.guibout@st.com>
-Date: Mon, 4 Apr 2022 18:23:25 +0200
+Date: Thu, 5 Oct 2023 11:09:11 +0200
 Subject: [PATCH] stm32mp1: update env to support boot A/B
 
 Patch to be reworked to avoid modifications in config_distro_bootcmd.h
-
-Change-Id: Ibe289b357338bb5177f8b2e1bc5ce28c44d1b0d4
 ---
  configs/stm32mp13_defconfig         | 2 +-
  configs/stm32mp15_defconfig         | 2 +-
@@ -16,49 +14,49 @@ Change-Id: Ibe289b357338bb5177f8b2e1bc5ce28c44d1b0d4
  6 files changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/configs/stm32mp13_defconfig b/configs/stm32mp13_defconfig
-index 2429c3f411..4835e47a1f 100644
+index 16c8b09a84..2ce9e555d9 100644
 --- a/configs/stm32mp13_defconfig
 +++ b/configs/stm32mp13_defconfig
-@@ -17,7 +17,7 @@ CONFIG_CMD_STM32PROG=y
- CONFIG_DISTRO_DEFAULTS=y
+@@ -20,7 +20,7 @@ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_CUSTOM_SYS_INIT_SP_ADDR=0xc0400000
  CONFIG_FIT=y
  CONFIG_BOOTDELAY=1
 -CONFIG_BOOTCOMMAND="run bootcmd_stm32mp"
 +CONFIG_BOOTCOMMAND="echo 'Boot A';setenv altboot 0;run bootcmd_stm32mp"
  CONFIG_FDT_SIMPLEFB=y
- CONFIG_SYS_PROMPT="STM32MP> "
- CONFIG_CMD_ADTIMG=y
+ CONFIG_USB_HUB_DEBOUNCE_TIMEOUT=2000
+ CONFIG_SYS_BOOTM_LEN=0x2000000
 diff --git a/configs/stm32mp15_defconfig b/configs/stm32mp15_defconfig
-index b4b2954273..964115cafc 100644
+index 67f9751ef8..a2471597ea 100644
 --- a/configs/stm32mp15_defconfig
 +++ b/configs/stm32mp15_defconfig
-@@ -16,7 +16,7 @@ CONFIG_CMD_STM32PROG=y
- CONFIG_DISTRO_DEFAULTS=y
+@@ -19,7 +19,7 @@ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_CUSTOM_SYS_INIT_SP_ADDR=0xc0100000
  CONFIG_FIT=y
  CONFIG_BOOTDELAY=1
 -CONFIG_BOOTCOMMAND="run bootcmd_stm32mp"
 +CONFIG_BOOTCOMMAND="echo 'Boot A';setenv altboot 0;run bootcmd_stm32mp"
  CONFIG_FDT_SIMPLEFB=y
- CONFIG_SYS_PROMPT="STM32MP> "
- CONFIG_CMD_ADTIMG=y
+ CONFIG_USB_HUB_DEBOUNCE_TIMEOUT=2000
+ CONFIG_SYS_PBSIZE=1050
 diff --git a/configs/stm32mp15_trusted_defconfig b/configs/stm32mp15_trusted_defconfig
-index 17233a596f..5e32969142 100644
+index eeb1f3413a..80e409b043 100644
 --- a/configs/stm32mp15_trusted_defconfig
 +++ b/configs/stm32mp15_trusted_defconfig
-@@ -17,7 +17,7 @@ CONFIG_CMD_STM32PROG=y
- CONFIG_DISTRO_DEFAULTS=y
+@@ -20,7 +20,7 @@ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_CUSTOM_SYS_INIT_SP_ADDR=0xc0100000
  CONFIG_FIT=y
  CONFIG_BOOTDELAY=1
 -CONFIG_BOOTCOMMAND="run bootcmd_stm32mp"
 +CONFIG_BOOTCOMMAND="echo 'Boot A';setenv altboot 0;run bootcmd_stm32mp"
  CONFIG_FDT_SIMPLEFB=y
- CONFIG_SYS_PROMPT="STM32MP> "
- CONFIG_CMD_ADTIMG=y
+ CONFIG_USB_HUB_DEBOUNCE_TIMEOUT=2000
+ CONFIG_SYS_PBSIZE=1050
 diff --git a/include/config_distro_bootcmd.h b/include/config_distro_bootcmd.h
-index 750e9e04e8..ddb31fb2e7 100644
+index 5506f3168f..6a3d8f905a 100644
 --- a/include/config_distro_bootcmd.h
 +++ b/include/config_distro_bootcmd.h
-@@ -479,6 +479,7 @@
+@@ -487,6 +487,7 @@
  		"part list ${devtype} ${devnum} -bootable devplist; "     \
  		"env exists devplist || setenv devplist 1; "              \
  		"for distro_bootpart in ${devplist}; do "                 \
@@ -67,10 +65,10 @@ index 750e9e04e8..ddb31fb2e7 100644
  					"${devnum}:${distro_bootpart} "   \
  					"bootfstype; then "               \
 diff --git a/include/configs/stm32mp13_common.h b/include/configs/stm32mp13_common.h
-index a0e90762af..c908f6cdef 100644
+index d561bc2d31..df36147fd0 100644
 --- a/include/configs/stm32mp13_common.h
 +++ b/include/configs/stm32mp13_common.h
-@@ -111,6 +111,7 @@
+@@ -93,6 +93,7 @@
  
  #define STM32MP_EXTRA \
  	"env_check=if env info -p -d -q; then env save; fi\0" \
@@ -79,10 +77,10 @@ index a0e90762af..c908f6cdef 100644
  
  #ifndef STM32MP_BOARD_EXTRA_ENV
 diff --git a/include/configs/stm32mp15_common.h b/include/configs/stm32mp15_common.h
-index 58971cc656..a9e0005497 100644
+index 98d83be852..c836b8fb5b 100644
 --- a/include/configs/stm32mp15_common.h
 +++ b/include/configs/stm32mp15_common.h
-@@ -146,6 +146,7 @@
+@@ -97,6 +97,7 @@
  
  #define STM32MP_EXTRA \
  	"env_check=if env info -p -d -q; then env save; fi\0" \
