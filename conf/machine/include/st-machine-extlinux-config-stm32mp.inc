@@ -17,6 +17,8 @@ UBOOT_EXTLINUX_SPLASH:stm32mp13 ?= "${UBOOT_SPLASH_LANDSCAPE_IMAGE}"
 UBOOT_EXTLINUX_KERNEL_ARGS ?= "rootwait rw"
 UBOOT_EXTLINUX_KERNEL_ARGS:append = " ${@bb.utils.contains('ST_DEBUG_TRACE', '1', '', '${ST_CMD_LINE_DEBUG_TRACE}', d)} "
 
+UBOOT_EXTLINUX_KERNEL_ARGS:stm32mp2common = "rootwait rw  earlyprintk earlycon"
+
 # -----------------------------------------------------------------------------
 # Configurations
 # -----------------------------------------------------------------------------
@@ -24,7 +26,9 @@ UBOOT_EXTLINUX_KERNEL_ARGS:append = " ${@bb.utils.contains('ST_DEBUG_TRACE', '1'
 UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'sdcard', 'nor-sdcard' ], 'target-sdcard', '', d)}"
 UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'nor', 'target-nor', '', d)}"
 UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'emmc', 'target-emmc', '', d)}"
-UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nand-4-256', 'nor-nand-4-256' ], 'target-nand', '', d)}"
+UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nand-4-256-1024' ], 'target-nand', '', d)}"
+UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nand-4-256-512', 'sdcard-nand-4-256-512' ], 'target-nand', '', d)}"
+UBOOT_EXTLINUX_TARGETS += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nand-2-128-128', 'sdcard-nand-2-128-128' ], 'target-nand', '', d)}"
 # Define labels for each target
 # (mandatory to allow specific var override if needed)
 UBOOT_EXTLINUX_LABELS:target-sdcard += "rootfs"
@@ -63,21 +67,18 @@ UBOOT_EXTLINUX_MENU_DESCRIPTION:rootfs = "OpenSTLinux"
 # the 'newlabel1' and 'newlabel2' labels.
 # -----------------------------------------------------------------------------
 # Define additional extra targets to consider
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-sdcard += "${STM32MP_DT_FILES_DK}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-sdcard += "${STM32MP_DT_FILES_ED}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-sdcard += "${STM32MP_DT_FILES_EV}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-emmc += "${STM32MP_DT_FILES_ED}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-emmc += "${STM32MP_DT_FILES_EV}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-nand += "${STM32MP_DT_FILES_ED}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-nand += "${STM32MP_DT_FILES_EV}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-nor += "${STM32MP_DT_FILES_ED}"
-UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-nor += "${STM32MP_DT_FILES_EV}"
+UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-sdcard += "${STM32MP_DT_FILES_SDCARD}"
+UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-emmc += "${STM32MP_DT_FILES_EMMC}"
+UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-nand += "${STM32MP_DT_FILES_NAND}"
+UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG:target-nor += "${STM32MP_DT_FILES_NOR}"
 # Define extra label configuration
+UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157d-dk1] += "stm32mp157d-dk1-a7-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157c-dk2] += "stm32mp157c-dk2-a7-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157f-dk2] += "stm32mp157f-dk2-a7-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157c-ev1] += "stm32mp157c-ev1-a7-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157f-ev1] += "stm32mp157f-ev1-a7-examples"
 
+UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157d-dk1] += "stm32mp157d-dk1-m4-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157c-dk2] += "stm32mp157c-dk2-m4-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157c-ev1] += "stm32mp157c-ev1-m4-examples"
 UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp157f-dk2] += "stm32mp157f-dk2-m4-examples"
@@ -89,6 +90,7 @@ UBOOT_EXTLINUX_TARGETS_EXTRA_CONFIG[stm32mp135f-dk] += "stm32mp135f-dk-a7-exampl
 # Configure A7 examples labels
 # -----------------------------------------------------------------------------
 # Define FDT overrides for new A7 labels
+UBOOT_EXTLINUX_FDT:stm32mp157d-dk1-a7-examples = "/stm32mp157d-dk1-a7-examples.dtb"
 UBOOT_EXTLINUX_FDT:stm32mp157c-dk2-a7-examples = "/stm32mp157c-dk2-a7-examples.dtb"
 UBOOT_EXTLINUX_FDT:stm32mp157c-ev1-a7-examples = "/stm32mp157c-ev1-a7-examples.dtb"
 UBOOT_EXTLINUX_FDT:stm32mp157f-dk2-a7-examples = "/stm32mp157f-dk2-a7-examples.dtb"
@@ -100,6 +102,7 @@ UBOOT_EXTLINUX_FDT:stm32mp135f-dk-a7-examples = "/stm32mp135f-dk-a7-examples.dtb
 # Configure M4 examples labels
 # -----------------------------------------------------------------------------
 # Define FDT overrides for new M4 labels
+UBOOT_EXTLINUX_FDT:stm32mp157d-dk1-m4-examples = "/stm32mp157d-dk1-m4-examples.dtb"
 UBOOT_EXTLINUX_FDT:stm32mp157c-dk2-m4-examples = "/stm32mp157c-dk2-m4-examples.dtb"
 UBOOT_EXTLINUX_FDT:stm32mp157c-ev1-m4-examples = "/stm32mp157c-ev1-m4-examples.dtb"
 UBOOT_EXTLINUX_FDT:stm32mp157f-dk2-m4-examples = "/stm32mp157f-dk2-m4-examples.dtb"

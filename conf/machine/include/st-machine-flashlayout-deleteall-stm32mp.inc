@@ -6,13 +6,12 @@ FLASHLAYOUT_BOOTSCHEME_LABELS += "deleteall"
 # -----------------------------------------------------------------------------
 # Define config labels
 # -----------------------------------------------------------------------------
-FLASHLAYOUT_CONFIG_LABELS:deleteall = "disco eval"
+FLASHLAYOUT_CONFIG_LABELS:deleteall = "board"
 
 # -----------------------------------------------------------------------------
 # Define label types for each config
 # -----------------------------------------------------------------------------
-FLASHLAYOUT_TYPE_LABELS:deleteall:disco = "${STM32MP_DT_FILES_DK}"
-FLASHLAYOUT_TYPE_LABELS:deleteall:eval  = "${STM32MP_DT_FILES_ED} ${STM32MP_DT_FILES_EV}"
+FLASHLAYOUT_TYPE_LABELS:deleteall:board = "${STM32MP_DEVICETREE}"
 
 # -----------------------------------------------------------------------------
 # Define partitions to consider for flashlayout file generation
@@ -27,6 +26,7 @@ FLASHLAYOUT_PARTITION_LABELS:deleteall = "${FLASHLAYOUT_PROGRAMMER_SECTIONS} emm
 FLASHLAYOUT_PARTITION_ENABLE:deleteall = "PED"
 FLASHLAYOUT_PARTITION_ENABLE:deleteall:${STM32MP_FSBL_PROGAMMER_NAME} = "-"
 FLASHLAYOUT_PARTITION_ENABLE:deleteall:${STM32MP_SSBL_PROGAMMER_NAME} = "-"
+FLASHLAYOUT_PARTITION_ENABLE:deleteall:${STM32MP_SSBL2_PROGAMMER_NAME} = "-"
 
 FLASHLAYOUT_PARTITION_TYPE:emmcall      = "RawImage"
 FLASHLAYOUT_PARTITION_TYPE:nandall      = "RawImage"
@@ -44,5 +44,6 @@ FLASHLAYOUT_PARTITION_OFFSET:deleteall:emmcboot1 = "${DEVICE_START_OFFSET_BOOT1:
 # The 'deleteall' bootscheme is a trick to generate flashlayout files to clean
 # all memory devices on board. There are no specific 'deleteall' bootloaders
 # so we need to manage specific override for FLASHLAYOUT_PROGRAMMER_SECTIONS binaries
-BOOTSCHEME_REPLACE = "${@'trusted' if bb.utils.contains('BOOTSCHEME_LABELS', 'trusted', True, False, d) and not bb.utils.contains('BOOTSCHEME_LABELS', 'optee', True, False, d) else 'optee'}"
-FLASHLAYOUT_PARTITION_REPLACE_PATTERNS:${STM32MP_SSBL_PROGAMMER_NAME}:append = " deleteall;${BOOTSCHEME_REPLACE}"
+FLASHLAYOUT_PARTITION_REPLACE_PATTERNS:${STM32MP_SSBL_PROGAMMER_NAME}:append = " deleteall;optee"
+FLASHLAYOUT_PARTITION_REPLACE_PATTERNS:${STM32MP_SSBL2_PROGAMMER_NAME}:append = " deleteall;optee "
+

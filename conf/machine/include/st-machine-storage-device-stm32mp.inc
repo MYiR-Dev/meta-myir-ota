@@ -4,6 +4,8 @@
 # Define device storage name and type mapping
 # -----------------------------------------------------------------------------
 DEVICE_STORAGE ?= "EMMC:mmc1, NAND:nand0, NOR:nor0, SDCARD:mmc0, SPINAND:spi-nand0"
+DEVICE_STORAGE:stm32mp1common ?= "EMMC:mmc1, NAND:nand0, NOR:nor0, SDCARD:mmc0, SPINAND:spi-nand0"
+DEVICE_STORAGE:stm32mp2common ?= "EMMC:mmc1, NAND:nand0, NOR:nor1, SDCARD:mmc0, SPINAND:spi-nand0"
 
 # -----------------------------------------------------------------------------
 # Define device storage name alias
@@ -23,14 +25,17 @@ DEVICE_STORAGE_TYPES += "mmc2"
 DEVICE_STORAGE_TYPES += "nand0"
 DEVICE_STORAGE_TYPES += "nor0"
 DEVICE_STORAGE_TYPES += "spi-nand0"
+DEVICE_STORAGE_TYPES += "nor1"
 
 python () {
     """
     This function configure dynamically the needed alias between generic storage
     device name and device type.
     Output for this function is the initialization of:
-        DEVICE_<device_name> = '<device_type>'
-        DEVICE_<device_type> = '<device_name>'
+        DEVICE:<device_name> = '<device_type>'
+        DEVICE:<device_type> = '<device_name>'
+    NB: we may have multiple <device_name> that refer to same <device_type>,
+        but the opposite is not allowed yet
     """
     device_storage_config = d.getVar('DEVICE_STORAGE') or ''
     if not device_storage_config:
@@ -54,7 +59,10 @@ python () {
                     bb.fatal('Wrong DEVICE_STORAGE configuration: "%s" is not part of supported device type (%s)' % (device_type, supported_device_types))
                 # Configure alias
                 d.setVar('DEVICE:%s' % device_name, device_type)
-                d.setVar('DEVICE:%s' % device_type, device_name)
+                if d.getVar('DEVICE:%s' % device_type):
+                    d.appendVar('DEVICE:%s' % device_type, ' ' + device_name)
+                else:
+                    d.setVar('DEVICE:%s' % device_type, device_name)
             else:
                 bb.fatal('Wrong DEVICE_STORAGE configuration: expecting DEVICE_STORAGE = "<device_name1>:<devie_type1>,<device_name2>:<device_type2>"')
 }
@@ -77,8 +85,7 @@ DEVICE_START_OFFSET_BOOT1:EMMC ?= "boot2"
 DEVICE_PARTUUID_ROOTFS:EMMC ?= "${@d.getVar(d.expand('DEVICE_PARTUUID_ROOTFS:${DEVICE:EMMC}')) or ''}"
 
 # Configure the list of boards that enable EMMC
-DEVICE_BOARD_ENABLE:EMMC += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'emmc', '${STM32MP_DT_FILES_ED}', '', d)}"
-DEVICE_BOARD_ENABLE:EMMC += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'emmc', '${STM32MP_DT_FILES_EV}', '', d)}"
+DEVICE_BOARD_ENABLE:EMMC += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'emmc', '${STM32MP_DT_FILES_EMMC}', '', d)}"
 
 # -----------------------------------------------------------------------------
 # NAND
@@ -88,7 +95,7 @@ DEVICE_MAX_OFFSET:NAND     ?= "0x40000000"
 DEVICE_ALIGNMENT_SIZE:NAND ?= "0x00040000"
 
 # Configure the list of boards that enable NAND
-DEVICE_BOARD_ENABLE:NAND   += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'nand-4-256', '${STM32MP_DT_FILES_EV}', '', d)}"
+DEVICE_BOARD_ENABLE:NAND   += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'nand-4-256-1024', '${STM32MP_DT_FILES_NAND}', '', d)}"
 
 # -----------------------------------------------------------------------------
 # NOR
@@ -98,10 +105,10 @@ DEVICE_MAX_OFFSET:NOR      ?= "0x04000000"
 DEVICE_ALIGNMENT_SIZE:NOR  ?= "0x00010000"
 
 # Configure the rootfs partition uid used in gpt partition table for NOR
-DEVICE_PARTUUID_ROOTFS:NOR ?= "${@d.getVar(d.expand('DEVICE_PARTUUID_ROOTFS:${DEVICE_NOR}')) or ''}"
+DEVICE_PARTUUID_ROOTFS:NOR ?= "${@d.getVar(d.expand('DEVICE_PARTUUID_ROOTFS:${DEVICE:NOR}')) or ''}"
 
 # Configure the list of boards that enable NOR
-DEVICE_BOARD_ENABLE:NOR    += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nor', 'nor-sdcard' ], '${STM32MP_DT_FILES_EV}', '', d)}"
+DEVICE_BOARD_ENABLE:NOR    += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nor', 'nor-sdcard' ], '${STM32MP_DT_FILES_NOR}', '', d)}"
 
 # -----------------------------------------------------------------------------
 # SDCARD
@@ -117,9 +124,7 @@ DEVICE_ALIGNMENT_SIZE:SDCARD  ?= "0x00000200"
 DEVICE_PARTUUID_ROOTFS:SDCARD ?= "${@d.getVar(d.expand('DEVICE_PARTUUID_ROOTFS:${DEVICE:SDCARD}')) or ''}"
 
 # Configure the list of boards that enable SDCARD
-DEVICE_BOARD_ENABLE:SDCARD += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'sdcard', '${STM32MP_DT_FILES_DK}', '', d)}"
-DEVICE_BOARD_ENABLE:SDCARD += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'sdcard', 'nor-sdcard', 'nor' ], '${STM32MP_DT_FILES_ED}', '', d)}"
-DEVICE_BOARD_ENABLE:SDCARD += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'sdcard', 'nor-sdcard', 'nor' ], '${STM32MP_DT_FILES_EV}', '', d)}"
+DEVICE_BOARD_ENABLE:SDCARD += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'sdcard', 'nor-sdcard', 'nor' ], '${STM32MP_DT_FILES_SDCARD}', '', d)}"
 
 # -----------------------------------------------------------------------------
 # SPI NAND
@@ -129,7 +134,7 @@ DEVICE_MAX_OFFSET:SPINAND     ?= "0x10000000"
 DEVICE_ALIGNMENT_SIZE:SPINAND ?= "0x00020000"
 
 # Configure the list of boards that enable SPINAND
-DEVICE_BOARD_ENABLE:SPINAND += "${@bb.utils.contains('BOOTDEVICE_LABELS', 'spinand-2-128', '', '', d)}"
+DEVICE_BOARD_ENABLE:SPINAND += "${@bb.utils.contains_any('BOOTDEVICE_LABELS', [ 'nand-2-128-128', 'nand-4-256-512' ], '${STM32MP_DT_FILES_SPINAND}', '', d)}"
 
 # -----------------------------------------------------------------------------
 # Fixed configuration from U-Boot source code
@@ -138,7 +143,10 @@ DEVICE_PARTUUID_ROOTFS:mmc0 ?= "e91c4e10-16e6-4c0e-bd0e-77becf4a3582"
 DEVICE_PARTUUID_ROOTFS:mmc1 ?= "491f6117-415d-4f53-88c9-6e0de54deac6"
 DEVICE_PARTUUID_ROOTFS:mmc2 ?= "fd58f1c7-be0d-4338-8ee9-ad8f050aeb18"
 DEVICE_PARTUUID_ROOTFS:nor0 ?= ""
+DEVICE_PARTUUID_ROOTFS:nor1 ?= ""
 
 DEVICE_TYPEUUID_FIP = "19d5df83-11b0-457b-be2c-7559c13142a5"
 DEVICE_PARTUUID_FIP_A = "4fd84c93-54ef-463f-a7ef-ae25ff887087"
 DEVICE_PARTUUID_FIP_B = "09c54952-d5bf-45af-acee-335303766fb3"
+DEVICE_PARTUUID_FWU_MDATA = "8a7a84a0-8387-40f6-ab41-a8b9a5a60d23"
+DEVICE_PARTUUID_UBOOT_ENV = "3de21764-95bd-54bd-a5c3-4abe786f38a8"
