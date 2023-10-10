@@ -1,6 +1,7 @@
 inherit bundle
 RAUC_BUNDLE_COMPATIBLE = "stm32mp1"
 RAUC_BUNDLE_SLOTS = "fip bootfs vendorfs rootfs"
+RAUC_BUNDLE_FORMAT = "verity"
 RAUC_SLOT_bootfs = "st-image-bootfs"
 RAUC_SLOT_bootfs[fstype] = "ext4"
 RAUC_SLOT_bootfs[type] = "image"
