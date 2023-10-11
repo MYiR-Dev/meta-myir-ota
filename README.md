@@ -85,7 +85,7 @@ Before executing an OTA update, you need to:
 
 ### How to generate a bundle ?
 The content of the bundle is a script in the bundle recipe `layers/meta-st/meta-st-ota/recipes-core/bundles/update-st-bundle-<board name>.bb`
-Where `<board name>` could be `stm32mp157f-ev1`, `stm32mp157f-dk2` or `stm32mp135f-dk`.
+Where `<board name>` can be `stm32mp157f-ev1`, `stm32mp157f-dk2` or `stm32mp135f-dk`.
 
 The layer contains prebuilt certificates that need to be updated for production.
 
@@ -96,28 +96,27 @@ bitbake update-st-bundle-stm32mp135f-dk
 More information in [RAUC documentation](https://rauc.readthedocs.io/en/latest/integration.html#bundle-generation)
 
 ### How to put in place the Hawkbit server ?
-As it was initialy planned to use Ostree, I started to use the Hawkbit Docker image built in FullMetalUpdate project.
-So, please fetch [FullMetalUpdate](https://github.com/FullMetalUpdate/fullmetalupdate-cloud-demo) to install it:
+Please fetch [Hawkbit docker-compose.yml](https://github.com/eclipse/hawkbit/blob/master/hawkbit-runtime/docker/docker-compose.yml) and run it:
 ```
-git clone https://github.com/FullMetalUpdate/fullmetalupdate-cloud-demo.git
-cd fullmetalupdate-cloud-demo
-./StartServer.sh
+mkdir hawkbit && cd hawkbit
+cp <Download folder>/docker-compose.yml .
+docker-compose up
 ```
 When the server is started, you can connect to its web interface following this URL : http://localhost:8080/UI/login/#/ with Username=admin and Password=admin.
 
-The server configuration is done through the script `ConfigureServer.sh` that can be customized:
+You can register your devices to Hawkbit through the following script that can be customized:
 ```
 curl -X POST \
  http://localhost:8080/rest/v1/targets --user admin:admin \
  -H 'Content-Type: application/json' \
  -H 'cache-control: no-cache' \
- -d '[ { 
- "securityToken" : "<your securityToken, ex:380ff2b5908e776cb69159f3f4477e4f>", 
- "controllerId" : "<your controllerId, ex: stm32mp1_1234>", 
- "name" : "<the name of your board, ex:stm32mp1_1234>" 
-} ]' 
+ -d '[ {
+ "securityToken" : "<the securityToken of the device, ex:380ff2b5908e776cb69159f3f4477e4f>",
+ "controllerId" : "<the controllerId of the device, ex: stm32mp1_1234>",
+ "name" : "<the name of the device, ex:stm32mp1_1234>"
+} ]'
 ```
-If configuration is well done, you should see in Hawkbit web interface, In deployment page, your target in "Target" enclosure.
+If the configuration is well done, you should see in Hawkbit web interface, In deployment page, the new device in "Target" enclosure.
 
 
 More information in [Hawkbit documentation](https://www.eclipse.org/hawkbit/)
@@ -138,8 +137,8 @@ hawkbit_server = <IP address of your Hawkbit's server>:8080
 ssl = false
 ca_file =
 tenant_id = DEFAULT
-target_name = <controllerId configured in Hawkbit server, ex:stm32mp1_1234>
-auth_token = <securityToken configured in Hawkbit server, ex:380ff2b5908e776cb69159f3f4477e4f>
+target_name = <the controllerId already configured in Hawkbit server, ex:stm32mp1_1234>
+auth_token = <the securityToken already configured in Hawkbit server, ex:380ff2b5908e776cb69159f3f4477e4f>
 mac_address = <the mac addr of your board>
 bundle_download_location = <by default : /usr/local/bundle.raucb>
 log_level = debug
@@ -149,7 +148,7 @@ More information in [rauc-hawkbit documentation](https://github.com/rauc/rauc-ha
 ### Launch the OTA
 Since rauc-1.7, rauc-hawkbit service is automatically loaded on boot by systemd, so the command `rauc-hawkbit-client -c /etc/rauc-hawkbit/config.cfg` is already started on boot.
 
-Here are the most important logs that can be observed with `journalctl -f | rauc-hawkbit-client` command:
+Here are the most important logs that can be observed with `journalctl -f` command:
 ```
 INFO     Deployment found for this target
 INFO     Starting bundle download
@@ -186,6 +185,6 @@ Here is a capture of Hawkbit interface with STM32MP OTA update completed:
 ## 7. Limitations - issues
 - If the OTA process is stopped (ex: press on reset button) during its execution, the OTA procedure will restart from the beginning.
 The reason is that tf-a is not capable to write into metadata partition (only linux does)
-- For test purpose, if you perform several OTA updates without doing a normal reboot between, the bootcount won't be reset and after 3 "trial" reboots, and tf-a will display the message "WARNING: Trial FWU fails to many times" because counter has not been reset, and it won't be possible to switch partitions (A to B or B to A)
+- For test purpose, if you perform several OTA updates without doing a normal reboot between (in trail mode), the bootcount won't be reset and after 3 "trial" reboots, and tf-a will display the message "WARNING: Trial FWU fails to many times" because counter has not been reset, and it won't be possible to switch partitions (A to B or B to A)
 - You can sometimes notice an exception during bundle download:`Exception in callback ReadTransport._loop_reading`, but it has no impact on the use case.
 
