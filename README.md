@@ -6,7 +6,7 @@
 - It uses A/B mechanism concept : all updatable partitions are duplicated : for example, rootfs becomes rootfs-a and rootfs-b. When a software running on rootfs-a is notified to be upgraded, the new version is installed on rootfs-b, and then system reboots on rootfs-b which becomes the new active version.
 - The embedded client is [rauc](https://rauc.readthedocs.io/en/latest/) which get software updates from [Hawkbit](https://www.eclipse.org/hawkbit/) server. A glue layer called [rauc-hawkbit](https://github.com/rauc/rauc-hawkbit) polls the Hawkbit server to transmit new bundle to rauc.
 - This layer is based on [STM32MP1-ecosystem-v5.0.0 Release note](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v5.0.0) which also needs [rauc layer](https://github.com/rauc/meta-rauc).
-- Look at [Overall presentation](https://github.com/PRG-MPU-CUST/meta-st-ota/blob/kirkstone/files/doc/FOTA.pptx) first (slides based on MMDV-3.1.0 and still relevant)!
+- Look at [Overall presentation](https://github.com/PRG-MPU-CUST/meta-st-ota/blob/kirkstone/files/doc/FOTA-MMDV-5.0.0-v1.1.pdf).
 
 
 ## Table of Contents
