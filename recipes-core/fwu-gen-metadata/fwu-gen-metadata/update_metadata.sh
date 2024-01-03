@@ -13,7 +13,7 @@ fi
 
 echo "Updating metadata partitions...."
 # Load metadata
-/usr/lib/fwu/fwumd_tool.py binparse /dev/disk/by-partlabel/metadata1 -j /tmp/dummy.json
+/usr/lib/fwu/fwumd_tool.py binparse /dev/disk/by-partlabel/metadata2 -j /tmp/dummy.json
 
 # Update index
 echo "set_active_index $1" | /usr/lib/fwu/fwumd_tool.py shell -j /tmp/dummy.json > /dev/null
