@@ -181,6 +181,8 @@ Here is a capture of Hawkbit interface with STM32MP OTA update completed:
 - u-boot : "Boot A" or "Boot B" is displayed depending on selected boot partition
 - kernel : in the kernel cmdline, rauc.slot=A if we are in "Boot A" or rauc.slot=B if we are in "Boot B"
 
+### How to check metadata CRC ?
+- The script metadata_check_crc.py checks if the content of metadata is safe or not by comparing the CRC stored in the image, and the CRC computed.
 
 ## 7. Limitations - issues
 - If the OTA process is stopped (ex: press on reset button) during its execution, the OTA procedure will restart from the beginning.

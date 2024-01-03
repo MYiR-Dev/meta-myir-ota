@@ -7,6 +7,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/CGUSTM/fwu_gen_metadata;protocol=https;branch=master \
 	file://update_metadata.sh \
+	file://metadata_check_crc.py \
 "
 
 SRCREV = "e94004e94fdfdaebec536f03df742916b416ffff"
@@ -21,6 +22,7 @@ do_install() {
 	install -d ${D}${libdir}/fwu/src
 	install -m 0755 ${WORKDIR}/git/src/*.py ${D}${libdir}/fwu/src
 	install -m 0755 ${WORKDIR}/update_metadata.sh ${D}${libdir}/fwu/
+	install -m 0755 ${WORKDIR}/metadata_check_crc.py ${D}${libdir}/fwu/
 }
 
 FILES:${PN} += "${libdir}/fwu"
