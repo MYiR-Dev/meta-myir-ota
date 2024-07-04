@@ -1,0 +1,38 @@
+From af07045cc304f5ce5474c59c0add0bd574803b4f Mon Sep 17 00:00:00 2001
+From: Christophe Guibout <christophe.guibout@st.com>
+Date: Wed, 12 Jun 2024 11:11:08 +0200
+Subject: [PATCH 1/2] autoboot: propagate boot index
+
+tf-a reads active_index from metadata, and write it into
+backup register.
+fwu_plat_get_bootidx() function reads it to load bootcmd or
+altbootcmd.
+---
+ common/autoboot.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/common/autoboot.c b/common/autoboot.c
+index cdafe76309..699f449fc5 100644
+--- a/common/autoboot.c
++++ b/common/autoboot.c
+@@ -443,6 +443,7 @@ const char *bootdelay_process(void)
+ {
+ 	char *s;
+ 	int bootdelay;
++	u32 boot_idx;
+ 
+ 	bootcount_inc();
+ 
+@@ -468,7 +469,8 @@ const char *bootdelay_process(void)
+ 		s = env_get("failbootcmd");
+ 	} else
+ #endif /* CONFIG_POST */
+-	if (bootcount_error())
++	fwu_plat_get_bootidx(&boot_idx);
++	if (boot_idx)
+ 		s = env_get("altbootcmd");
+ 	else
+ 		s = env_get("bootcmd");
+-- 
+2.34.1
+

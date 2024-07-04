@@ -6,5 +6,6 @@ IMAGE_INSTALL:append = "     \
     rauc-hawkbit             \
     rauc-hawkbit-service     \
     rauc-service             \
-    fwu-gen-metadata         \
+    fwu-gen-metadata-v2      \
+    u-boot-tools-stm32mp     \
 "

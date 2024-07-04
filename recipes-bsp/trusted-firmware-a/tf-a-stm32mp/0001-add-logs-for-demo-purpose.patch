@@ -1,0 +1,57 @@
+From c10b88971e624cc7faed37360bb29ce689fac3b2 Mon Sep 17 00:00:00 2001
+From: Christophe Guibout <christophe.guibout@st.com>
+Date: Mon, 10 Jun 2024 14:13:42 +0200
+Subject: [PATCH] add logs for demo purpose
+
+---
+ plat/st/common/bl2_io_storage.c | 6 ++++--
+ plat/st/common/stm32mp_common.c | 1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/plat/st/common/bl2_io_storage.c b/plat/st/common/bl2_io_storage.c
+index 34a16ddb6..18bacf013 100644
+--- a/plat/st/common/bl2_io_storage.c
++++ b/plat/st/common/bl2_io_storage.c
+@@ -799,8 +799,9 @@ uint32_t plat_fwu_get_boot_idx(void)
+ 		const struct fwu_metadata *data = fwu_get_metadata();
+ 
+ 		boot_idx = data->active_index;
+-
++		NOTICE("!!CGU : active index: %u, bank state: %d\n", boot_idx, data->bank_state[boot_idx]);
+ 		if (data->bank_state[boot_idx] == FWU_BANK_STATE_VALID) {
++			NOTICE("!! CGU: bank is in trial mode\n");
+ 			if (stm32_get_and_dec_fwu_trial_boot_cnt() == 0U) {
+ 				WARN("Trial FWU fails %u times\n",
+ 				     FWU_MAX_TRIAL_REBOOT);
+@@ -808,6 +809,7 @@ uint32_t plat_fwu_get_boot_idx(void)
+ 			}
+ 		} else if (data->bank_state[boot_idx] ==
+ 			   FWU_BANK_STATE_ACCEPTED) {
++			NOTICE("!! CGU: bank is accepted\n");
+ 			stm32_set_max_fwu_trial_boot_cnt();
+ 		} else {
+ 			ERROR("The active bank(%u) of the platform is in Invalid State.\n",
+@@ -846,7 +848,7 @@ void plat_fwu_set_images_source(const struct fwu_metadata *metadata)
+ 
+ 	boot_idx = plat_fwu_get_boot_idx();
+ 	assert(boot_idx < NR_OF_FW_BANKS);
+-	VERBOSE("Selecting to boot from bank %u\n", boot_idx);
++	INFO("Selecting to boot from bank %u\n", boot_idx);
+ 
+ 	img_entry = (void *)&metadata->fw_desc.img_entry;
+ 	for (i = 0U; i < NR_OF_IMAGES_IN_FW_BANK; i++) {
+diff --git a/plat/st/common/stm32mp_common.c b/plat/st/common/stm32mp_common.c
+index 4b2984725..e85e35061 100644
+--- a/plat/st/common/stm32mp_common.c
++++ b/plat/st/common/stm32mp_common.c
+@@ -644,6 +644,7 @@ uint32_t stm32_get_and_dec_fwu_trial_boot_cnt(void)
+ 					(try_cnt - 1U) << FWU_INFO_CNT_OFF);
+ 	}
+ 
++	WARN("fwu bootcount %lu\n", (unsigned long)try_cnt);
+ 	return try_cnt;
+ }
+ 
+-- 
+2.34.1
+

@@ -1,5 +1,5 @@
 inherit bundle
-RAUC_BUNDLE_COMPATIBLE = "stm32mp1"
+RAUC_BUNDLE_COMPATIBLE = "stm32mpu"
 RAUC_BUNDLE_SLOTS = "fip bootfs vendorfs rootfs"
 RAUC_BUNDLE_FORMAT = "verity"
 RAUC_SLOT_bootfs = "st-image-bootfs"
@@ -17,7 +17,7 @@ RAUC_SLOT_vendorfs[file] = "st-image-vendorfs-openstlinux-weston-stm32mp1-ota.ex
 RAUC_SLOT_fip = "tf-a-stm32mp"
 RAUC_SLOT_fip[fstype] = "raw"
 RAUC_SLOT_fip[type] = "boot"
-RAUC_SLOT_fip[file] = "fip/fip-stm32mp157f-ev1-optee.bin"
-RAUC_SLOT_fip[rename] = "fip-stm32mp157f-ev1-optee.bin"
+RAUC_SLOT_fip[file] = "fip/fip-stm32mp157f-ev1-optee-emmc.bin"
+RAUC_SLOT_fip[rename] = "fip-stm32mp157f-ev1-optee-emmc.bin"
 RAUC_KEY_FILE = "${THISDIR}/files/development-1.key.pem"
 RAUC_CERT_FILE = "${THISDIR}/files/development-1.cert.pem"
