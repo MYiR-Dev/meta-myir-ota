@@ -10,7 +10,7 @@ then
     echo "arg1: active partition number: 0 (rauc.slot=A) or 1 (rauc.slot=B)"
     echo "arg2: previous partition number: 0 (rauc.slot=A) or 1 (rauc.slot=B)"
     echo "      Should be different from active partition number"
-    echo "arg3: active partition acceptation: accept (trial mode ON) or refuse (trial mode OFF)"
+    echo "arg3: active partition acceptation: accept (trial mode OFF) or refuse (trial mode ON)"
     exit 1
 fi
 
@@ -38,7 +38,7 @@ CMD="mkfwumdata ${OPTIONS} -s ${bank_state} -a $1 -p $2 ${UUID_LIST}"
 echo ${CMD}
 ${CMD} /dev/disk/by-partlabel/metadata1
 ${CMD} /dev/disk/by-partlabel/metadata2
-
+sync
 
 if test $1 -eq 0
 then

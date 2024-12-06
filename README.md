@@ -5,13 +5,13 @@
 - This layer is used to demonstrate SW update OTA use case on STM32MPU boards.
 - It uses A/B mechanism concept : all updatable partitions are duplicated : for example, rootfs becomes rootfs-a and rootfs-b. When a software running on rootfs-a is notified to be upgraded, the new version is installed on rootfs-b, and then system reboots on rootfs-b which becomes the new active version.
 - The embedded client is [rauc](https://rauc.readthedocs.io/en/latest/) which get software updates from [Hawkbit](https://www.eclipse.org/hawkbit/) server. A glue layer called [rauc-hawkbit](https://github.com/rauc/rauc-hawkbit) polls the Hawkbit server to transmit new bundle to rauc.
-- This layer is based on official DV-5.1 [openstlinux-24-06-26](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v5.1.0) which also needs [rauc layer](https://github.com/rauc/meta-rauc).
+- This layer is based on official DV-6.0 [openstlinux-24-11-06](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v6.0.0) which also needs [rauc layer](https://github.com/rauc/meta-rauc).
 
 
 ## What's new in that release ?
-This release is mostly an update to be able to run on top of ecosystem-v5.1.0, but I'd like to highlight several improvements:
+This release is mostly an update to be able to run on top of ecosystem-v6.0.0, but I'd like to highlight several improvements:
 - Support of STM32MP257F-EV1 board
-- Ecosystem-v5.1.0 brings the support of new metadata partition: metadata v2 which is selected by default. metadata v1 is still supported in that layer but disabled by default.
+- Ecosystem-v6.0.0 brings the support of new metadata partition: metadata v2 which is selected by default. metadata v1 is still supported in that layer but disabled by default.
 - The root partition is described in the kernel cmdline as partuuid instead of partlabel
 - rauc : partitions listed as partlabel in system.conf instead of hardcoded numbers
 
@@ -26,7 +26,7 @@ This release is mostly an update to be able to run on top of ecosystem-v5.1.0, b
 
 
 ## 1. Documentation
-- [STM32MPU-ecosystem-v5.1.0 Release note](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v5.1.0)
+- [STM32MPU-ecosystem-v6.0.0 Release note](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v6.0.0)
 - [STM32MP13 ressources](https://wiki.st.com/stm32mpu/wiki/STM32MP13_resources)
 - [MP13 Disco schematic](https://wiki.st.com/stm32mpu/wiki/STM32MP13_resources#MB1635_schematics)
 - [STM32MP15 ressources](https://wiki.st.com/stm32mpu/wiki/STM32MP15_resources)
@@ -51,11 +51,11 @@ A STM32MP135F-DK or STM32MP157F-DK2 or STM32MP157F-EV1 or STM32MP257F-EV1 is req
 ### Fetch the two following layers :
 ```
 cd <Yocto source tree>/layers
-git clone --branch mickledore https://github.com/rauc/meta-rauc.git
+git clone --branch scarthgap https://github.com/rauc/meta-rauc.git
 cd meta-rauc
 
 cd <Yocto source tree>/layers/meta-st
-git clone --branch mickledore https://github.com/PRG-MPU-CUST/meta-st-ota.git
+git clone --branch scarthgap https://github.com/PRG-MPU-CUST/meta-st-ota.git
 ```
 - The meta-rauc layer provides support for integrating the RAUC update tool into the device.
 - The meta-st-ota layer which provides all STM32MP specifities is automatically added when sourcing envsetup.sh with MACHINE option.
@@ -174,9 +174,9 @@ Here is a capture of Hawkbit interface with STM32MP OTA update completed:
 ## 6. Extra explanations
 
 ### About metadata partition version
-Since ecosystem-v5.1.0, metadata format as been moved from v1 to v2.
+Since ecosystem-v6.0.0, metadata format as been moved from v1 to v2.
 - A new device will use metadata v2
-- A device already in production with metadata v1 stays with metadata v1 (tf-a BL2 and metadadata partition and not updatable). That's why update agent starting from ecosystem-v5.1.0 needs to support both versions:
+- A device already in production with metadata v1 stays with metadata v1 (tf-a BL2 and metadadata partition and not updatable). That's why update agent starting from ecosystem-v6.0.0 needs to support both versions:
   - metadata v2 : enabled by default
   - metadata v1 : disabled by default. To enable it, rename fwu-gen-metadata-v2 into fwu-gen-metadata-v1 in st-image-weston.bbappend recipe.
 
