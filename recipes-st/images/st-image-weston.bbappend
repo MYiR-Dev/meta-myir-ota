@@ -3,6 +3,7 @@
 #
 IMAGE_INSTALL:append = "     \
     rauc                     \
+    rauc-conf                \
     rauc-hawkbit             \
     rauc-hawkbit-service     \
     rauc-service             \
