@@ -39,7 +39,8 @@ part_dico = {"boot"  : {"A" : "bootfs-a", "B" : "bootfs-b"},
              "vendorfs": {"A" : "vendorfs-a", "B" : "vendorfs-b"},
              "rootfs"  : {"A" : "rootfs-a", "B" : "rootfs-b"}}
 
-uuid_dico = {"rootfs"  : {"A" : "e91c4e10-16e6-4c0e-bd0e-77becf4a3582", "B" : "087c3ebe-60ca-4517-a55d-c1d7237ead55"}}
+#rootfs-b PARTUUID is filled in get_rootfsb_uuid() function
+uuid_dico = {"rootfs"  : {"A" : "e91c4e10-16e6-4c0e-bd0e-77becf4a3582", "B" : "unknown"}}
 
 boot_part_num_dico = {"A" : 0, "B" : 1}
 
@@ -91,12 +92,25 @@ def umount(target):
         print("Error umounting %s : %s" % (target, os.strerror(errno)))
 
 
+def get_rootfsb_uuid():
+    p = subprocess.Popen(["blkid"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = p.communicate()
+    lines = output.splitlines()
+    for line in lines:
+         if 'rootfs-b' in str(line):
+             for param in line.split():
+                if 'PARTUUID=' in str(param):
+                    uuid = str(param).split("=")[1].split('"')[1::2][0]
+                    print("rootfs-b PARTUUID updated: %s" % uuid)
+                    uuid_dico["rootfs"]["B"]=uuid
+
 
 current_boot_slot = get_boot_slot()
 next_boot_slot = get_next_boot_slot[current_boot_slot]
 
 print ("current_boot_slot=%s" % current_boot_slot)
 
+get_rootfsb_uuid()
 
 #update rootfs mount point in boot partition
 dirName = "%s/boot_%s" % (temp_mount_dir, next_boot_slot)
