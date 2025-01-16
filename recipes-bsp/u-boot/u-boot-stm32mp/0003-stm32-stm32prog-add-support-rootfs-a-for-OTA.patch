@@ -1,0 +1,31 @@
+From 33c754242e3481e93a117a4c3ac8e0414f50feb3 Mon Sep 17 00:00:00 2001
+From: Patrick Delaunay <patrick.delaunay@foss.st.com>
+Date: Thu, 16 Jan 2025 10:54:34 +0100
+Subject: [PATCH 3/3] stm32: stm32prog: add support rootfs-a for OTA
+
+Add support of "rootfs-a" name to allow support of A/B mechanism for OTA
+on rootfs.
+
+Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+Change-Id: I1a176d5516a6093ca97bfde849c9100c6aa3ada0
+---
+ arch/arm/mach-stm32mp/cmd_stm32prog/stm32prog.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-stm32mp/cmd_stm32prog/stm32prog.c b/arch/arm/mach-stm32mp/cmd_stm32prog/stm32prog.c
+index 1843667d147..40f1b131936 100644
+--- a/arch/arm/mach-stm32mp/cmd_stm32prog/stm32prog.c
++++ b/arch/arm/mach-stm32mp/cmd_stm32prog/stm32prog.c
+@@ -1146,7 +1146,8 @@ static int create_gpt_partitions(struct stm32prog_data *data)
+ 
+ 			/* partition UUID */
+ 			uuid_bin = NULL;
+-			if (!rootfs_found && !strcmp(part->name, "rootfs")) {
++			if (!rootfs_found && (!strcmp(part->name, "rootfs") ||
++					      !strcmp(part->name, "rootfs-a"))) {
+ 				mmc_id = part->dev_id;
+ 				rootfs_found = true;
+ 				if (mmc_id < ARRAY_SIZE(uuid_mmc))
+-- 
+2.34.1
+
