@@ -1,23 +1,25 @@
-From 32d08e56bc86bed5387213a81d23871fc7b304bc Mon Sep 17 00:00:00 2001
+From 229767a384222eb5ebd0ba34f2634e4764a30725 Mon Sep 17 00:00:00 2001
 From: Christophe Guibout <christophe.guibout@st.com>
-Date: Fri, 6 Dec 2024 13:57:00 +0100
-Subject: [PATCH 2/3] stm32mp1: update env to support boot A/B
+Date: Mon, 23 Jun 2025 13:41:30 +0200
+Subject: [PATCH 2/3] stm32mp: update env to support boot A/B
 
 Patch to be reworked to avoid modifications in config_distro_bootcmd.h
-
-Change-Id: Ie34068477444bc51b5bfc036660945ad6b6931d3
 ---
  configs/stm32mp13_defconfig        | 2 +-
  configs/stm32mp15_defconfig        | 2 +-
+ configs/stm32mp21_defconfig        | 2 +-
+ configs/stm32mp23_defconfig        | 2 +-
  configs/stm32mp25_defconfig        | 2 +-
  include/config_distro_bootcmd.h    | 1 +
  include/configs/stm32mp13_common.h | 1 +
  include/configs/stm32mp15_common.h | 1 +
+ include/configs/stm32mp21_common.h | 1 +
+ include/configs/stm32mp23_common.h | 1 +
  include/configs/stm32mp25_common.h | 1 +
- 7 files changed, 7 insertions(+), 3 deletions(-)
+ 11 files changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/configs/stm32mp13_defconfig b/configs/stm32mp13_defconfig
-index 830dfff653a..43fb56be62a 100644
+index 830dfff653..43fb56be62 100644
 --- a/configs/stm32mp13_defconfig
 +++ b/configs/stm32mp13_defconfig
 @@ -24,7 +24,7 @@ CONFIG_FIT_SIGNATURE=y
@@ -30,7 +32,7 @@ index 830dfff653a..43fb56be62a 100644
  CONFIG_SYS_PROMPT="STM32MP> "
  CONFIG_CMD_FWU_METADATA=y
 diff --git a/configs/stm32mp15_defconfig b/configs/stm32mp15_defconfig
-index 5821cb3d235..14861782bcb 100644
+index 5821cb3d23..14861782bc 100644
 --- a/configs/stm32mp15_defconfig
 +++ b/configs/stm32mp15_defconfig
 @@ -22,7 +22,7 @@ CONFIG_FIT_SIGNATURE=y
@@ -42,8 +44,34 @@ index 5821cb3d235..14861782bcb 100644
  CONFIG_FDT_SIMPLEFB=y
  CONFIG_SYS_PROMPT="STM32MP> "
  CONFIG_SYS_PBSIZE=1050
+diff --git a/configs/stm32mp21_defconfig b/configs/stm32mp21_defconfig
+index a95320828a..3bced8d184 100644
+--- a/configs/stm32mp21_defconfig
++++ b/configs/stm32mp21_defconfig
+@@ -24,7 +24,7 @@ CONFIG_FIT_SIGNATURE=y
+ CONFIG_LEGACY_IMAGE_FORMAT=y
+ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_BOOTDELAY=1
+-CONFIG_BOOTCOMMAND="run bootcmd_stm32mp"
++CONFIG_BOOTCOMMAND="echo 'Boot A';setenv altboot 0;run bootcmd_stm32mp"
+ CONFIG_FDT_SIMPLEFB=y
+ CONFIG_SYS_PROMPT="STM32MP> "
+ CONFIG_CMD_BDINFO_EXTRA=y
+diff --git a/configs/stm32mp23_defconfig b/configs/stm32mp23_defconfig
+index bf6d130902..e1d76c6a62 100644
+--- a/configs/stm32mp23_defconfig
++++ b/configs/stm32mp23_defconfig
+@@ -24,7 +24,7 @@ CONFIG_FIT_SIGNATURE=y
+ CONFIG_LEGACY_IMAGE_FORMAT=y
+ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_BOOTDELAY=1
+-CONFIG_BOOTCOMMAND="run bootcmd_stm32mp"
++CONFIG_BOOTCOMMAND="echo 'Boot A';setenv altboot 0;run bootcmd_stm32mp"
+ CONFIG_FDT_SIMPLEFB=y
+ CONFIG_SYS_PROMPT="STM32MP> "
+ CONFIG_CMD_BDINFO_EXTRA=y
 diff --git a/configs/stm32mp25_defconfig b/configs/stm32mp25_defconfig
-index 5b8aab47b8e..9cc5d3cd59a 100644
+index 5b8aab47b8..9cc5d3cd59 100644
 --- a/configs/stm32mp25_defconfig
 +++ b/configs/stm32mp25_defconfig
 @@ -24,7 +24,7 @@ CONFIG_FIT_SIGNATURE=y
@@ -56,7 +84,7 @@ index 5b8aab47b8e..9cc5d3cd59a 100644
  CONFIG_SYS_PROMPT="STM32MP> "
  CONFIG_CMD_BDINFO_EXTRA=y
 diff --git a/include/config_distro_bootcmd.h b/include/config_distro_bootcmd.h
-index 2a136b96a6d..a95f57141ad 100644
+index 2a136b96a6..a95f57141a 100644
 --- a/include/config_distro_bootcmd.h
 +++ b/include/config_distro_bootcmd.h
 @@ -541,6 +541,7 @@
@@ -68,7 +96,7 @@ index 2a136b96a6d..a95f57141ad 100644
  					"${devnum}:${distro_bootpart} "   \
  					"bootfstype; then "               \
 diff --git a/include/configs/stm32mp13_common.h b/include/configs/stm32mp13_common.h
-index 09b4ebc0889..b5ddfddd580 100644
+index 09b4ebc088..b5ddfddd58 100644
 --- a/include/configs/stm32mp13_common.h
 +++ b/include/configs/stm32mp13_common.h
 @@ -85,6 +85,7 @@
@@ -80,7 +108,7 @@ index 09b4ebc0889..b5ddfddd580 100644
  
  #ifndef STM32MP_BOARD_EXTRA_ENV
 diff --git a/include/configs/stm32mp15_common.h b/include/configs/stm32mp15_common.h
-index 19b989cba2c..f8d6bb83e34 100644
+index 19b989cba2..f8d6bb83e3 100644
 --- a/include/configs/stm32mp15_common.h
 +++ b/include/configs/stm32mp15_common.h
 @@ -90,6 +90,7 @@
@@ -91,8 +119,32 @@ index 19b989cba2c..f8d6bb83e34 100644
  	"boot_net_usb_start=true\0"
  
  #ifndef STM32MP_BOARD_EXTRA_ENV
+diff --git a/include/configs/stm32mp21_common.h b/include/configs/stm32mp21_common.h
+index 1b0daf4b5b..92a616f553 100644
+--- a/include/configs/stm32mp21_common.h
++++ b/include/configs/stm32mp21_common.h
+@@ -92,6 +92,7 @@
+ 
+ #define STM32MP_EXTRA \
+ 	"env_check=if env info -p -d -q; then env save; fi\0" \
++	"altbootcmd=echo 'Boot B';setenv altboot 1;run bootcmd_stm32mp\0" \
+ 	"boot_net_usb_start=true\0"
+ /*
+  * memory layout for 96MB uncompressed/compressed kernel,
+diff --git a/include/configs/stm32mp23_common.h b/include/configs/stm32mp23_common.h
+index d9cb8b2392..f1fbbe6d4f 100644
+--- a/include/configs/stm32mp23_common.h
++++ b/include/configs/stm32mp23_common.h
+@@ -92,6 +92,7 @@
+ 
+ #define STM32MP_EXTRA \
+ 	"env_check=if env info -p -d -q; then env save; fi\0" \
++	"altbootcmd=echo 'Boot B';setenv altboot 1;run bootcmd_stm32mp\0" \
+ 	"boot_net_usb_start=true\0"
+ /*
+  * memory layout for 96MB uncompressed/compressed kernel,
 diff --git a/include/configs/stm32mp25_common.h b/include/configs/stm32mp25_common.h
-index 711b82430e7..cbe9514cafc 100644
+index 711b82430e..cbe9514caf 100644
 --- a/include/configs/stm32mp25_common.h
 +++ b/include/configs/stm32mp25_common.h
 @@ -92,6 +92,7 @@
