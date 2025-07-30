@@ -5,15 +5,16 @@
 - This layer is used to demonstrate SW update OTA use case on STM32MPU boards.
 - It uses A/B mechanism concept : all updatable partitions are duplicated : for example, rootfs becomes rootfs-a and rootfs-b. When a software running on rootfs-a is notified to be upgraded, the new version is installed on rootfs-b, and then system reboots on rootfs-b which becomes the new active version.
 - The embedded client is [rauc](https://rauc.readthedocs.io/en/latest/) which get software updates from [Hawkbit](https://www.eclipse.org/hawkbit/) server. A glue layer called [rauc-hawkbit](https://github.com/rauc/rauc-hawkbit) polls the Hawkbit server to transmit new bundle to rauc.
-- This layer is based on official DV-6.0 [openstlinux-24-11-06](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v6.0.0) which also needs [rauc layer](https://github.com/rauc/meta-rauc).
+- This layer is based on official DV-6.1 [openstlinux-25-06-11](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v6.1.0) which also needs [rauc layer](https://github.com/rauc/meta-rauc).
 
 
 ## What's new in that release ?
-This release is mostly an update to be able to run on top of ecosystem-v6.0.0, but I'd like to highlight several improvements:
-- Support of STM32MP257F-EV1 board
-- Ecosystem-v6.0.0 brings the support of new metadata partition: metadata v2 which is selected by default. metadata v1 is still supported in that layer but disabled by default.
-- The root partition is described in the kernel cmdline as partuuid instead of partlabel
-- rauc : partitions listed as partlabel in system.conf instead of hardcoded numbers
+This release is mostly an update to be able to run on top of ecosystem-v6.1.0, with :
+- Support of stm32mp215f-dk board
+- Several patches have been upstreamed into STM32MPU-ecosystem, so they have been removed from this layer:
+  - u-boot: propagate boot index
+  - u-boot: stm32prog: add support rootfs-a for OTA
+  - u-boot: mkfwumdata: manage bank accepted entry
 
 ## Table of Contents
 1. Documentation
@@ -26,7 +27,7 @@ This release is mostly an update to be able to run on top of ecosystem-v6.0.0, b
 
 
 ## 1. Documentation
-- [STM32MPU-ecosystem-v6.0.0 Release note](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v6.0.0)
+- [STM32MPU-ecosystem-v6.1.0 Release note](https://wiki.st.com/stm32mpu/wiki/STM32_MPU_OpenSTLinux_release_note_-_v6.1.0)
 - [STM32MP13 ressources](https://wiki.st.com/stm32mpu/wiki/STM32MP13_resources)
 - [MP13 Disco schematic](https://wiki.st.com/stm32mpu/wiki/STM32MP13_resources#MB1635_schematics)
 - [STM32MP15 ressources](https://wiki.st.com/stm32mpu/wiki/STM32MP15_resources)
@@ -37,7 +38,7 @@ This release is mostly an update to be able to run on top of ecosystem-v6.0.0, b
 
 
 ## 2. HW requirements
-A STM32MP135F-DK or STM32MP157F-DK2 or STM32MP157F-EV1 or STM32MP257F-EV1 is requested.
+A STM32MP135F-DK or STM32MP157F-DK2 or STM32MP157F-EV1 or STM32MP215F-DK or STM32MP257F-EV1 is requested.
 
 
 ## 3. SW requirements
@@ -63,7 +64,7 @@ git clone --branch scarthgap https://github.com/PRG-MPU-CUST/meta-st-ota.git
 ### Initializing the OpenEmbedded build environment
 The layer meta-st-ota contains a machine named "stm32mp1-ota" or "stm32mp2-ota" that needs to be used when sourcing the environment:
 ```
-DISTRO=openstlinux-weston MACHINE=stm32mp1-ota source layers/meta-st/scripts/envsetup.sh
+DISTRO=openstlinux-weston MACHINE=stm32mp2-ota source layers/meta-st/scripts/envsetup.sh
 ```
 ### Add the rauc related layer
 Execute the following commands to configure environement with the new machine for OTA for STM32MPU boards:
@@ -82,13 +83,13 @@ Before executing an OTA update, you need to:
 
 ### How to generate a bundle ?
 The content of the bundle is a script in the bundle recipe `layers/meta-st/meta-st-ota/recipes-core/bundles/update-st-bundle-<board name>.bb`
-Where `<board name>` can be `stm32mp157f-ev1`, `stm32mp157f-dk2`, `stm32mp135f-dk` or `stm32mp257f-ev1`.
+Where `<board name>` can be `stm32mp157f-ev1`, `stm32mp157f-dk2`, `stm32mp135f-dk`, `stm32mp215f-dk` or `stm32mp257f-ev1`.
 
 The layer contains prebuilt certificates that need to be updated for production.
 
 Execute the following command to build the bundle (example for MP13 disco board):
 ```
-bitbake update-st-bundle-stm32mp135f-dk
+bitbake update-st-bundle-stm32mp257f-ev1
 ```
 More information in [RAUC documentation](https://rauc.readthedocs.io/en/latest/integration.html#bundle-generation)
 
@@ -114,13 +115,13 @@ curl -X POST \
  "name" : "<the name of the device, ex:stm32mpu_1234>"
 } ]'
 ```
-If the configuration is well done, you should see in Hawkbit web interface, In deployment page, the new device in "Target" enclosure.
+If the configuration is well done, you should see in Hawkbit web interface, in deployment page, the new device in "Target" enclosure.
 
 
 More information in [Hawkbit documentation](https://www.eclipse.org/hawkbit/)
 
 ### How to add the bundle on the frontend server ?
-1. In upload page, Create a Software module (type : OS) called stm32mp1 and upload the bundle from `<Yocto source tree>
+1. In upload page, create a software module (type : OS) called stm32mp1 and upload the bundle from `<Yocto source tree>
 /build-openstlinuxweston-stm32mp1-ota/tmp-glibc/deploy/images/stm32mp1-ota/update-st-bundle-stm32mp1-ota.raucb`
 2. In Distributions page, create a new distribution (type: OS with app(s)) called distri-stm32mp1, and drag and drop the software module into the new distrubution
 3. In deployment, drag and drop the distribution into the target, and confirm assignement by keepin "forced" selected : The server is ready to send the OTA update as soon as rauc-hawkbit will connect to it.

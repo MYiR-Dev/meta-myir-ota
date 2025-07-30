@@ -1,36 +1,27 @@
-From 0d1e62b1f5cf07ef38b728808664abcfe54e5ac3 Mon Sep 17 00:00:00 2001
+From 0853f69916a69513992fdc9cee6ccda5be9b4860 Mon Sep 17 00:00:00 2001
 From: Christophe Guibout <christophe.guibout@st.com>
-Date: Wed, 12 Jun 2024 11:11:08 +0200
-Subject: [PATCH 1/3] autoboot: propagate boot index from tf-a
+Date: Tue, 29 Jul 2025 17:20:37 +0200
+Subject: [PATCH 2/2] autoboot: propagate boot index from tf-a
 
 tf-a reads boot index from metadata, and write it into FWU
 backup register.
 During an update, in case of failure of active partition after
 several attempts (bootcount max count triggered), the system
 needs to reboot on previous_active partition, so u-boot needs
-to read FWU_INFO backup register (fwu metadata partition is
-not updated by tf-a).
+to read FWU_INFO backup register instead of reading metadata.
+(fwu metadata partition is not updated by tf-a).
 fwu_plat_get_bootidx() function reads the backup register to
 load bootcmd or altbootcmd.
 ---
- arch/arm/mach-stm32mp/include/mach/stm32.h |  6 +++++-
- board/st/stm32mp2/stm32mp2.c               | 20 ++++++++++++++++++++
- common/autoboot.c                          |  4 +++-
- 3 files changed, 28 insertions(+), 2 deletions(-)
+ arch/arm/mach-stm32mp/include/mach/stm32.h |  5 +++++
+ board/st/stm32mp2/stm32mp2.c               | 21 +++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
 diff --git a/arch/arm/mach-stm32mp/include/mach/stm32.h b/arch/arm/mach-stm32mp/include/mach/stm32.h
-index 7c4836a894..1c5df49b65 100644
+index 7c4836a8948..18c04cf338e 100644
 --- a/arch/arm/mach-stm32mp/include/mach/stm32.h
 +++ b/arch/arm/mach-stm32mp/include/mach/stm32.h
-@@ -138,7 +138,6 @@ enum forced_boot_mode {
- #define TAMP_BOOTCOUNT			TAMP_BACKUP_REGISTER(21)
- 
- #define TAMP_FWU_BOOT_IDX_MASK		GENMASK(3, 0)
--
- #define TAMP_FWU_BOOT_IDX_OFFSET	0
- #endif
- 
-@@ -185,8 +184,13 @@ enum forced_boot_mode {
+@@ -185,10 +185,15 @@ enum forced_boot_mode {
  /* TAMP registers x = 0 to 127 : hardcoded description, waiting NVMEM node in DT */
  #define TAMP_BACKUP_REGISTER(x)		(STM32_TAMP_BASE + 0x100 + 4 * (x))
  
@@ -38,17 +29,19 @@ index 7c4836a894..1c5df49b65 100644
 +
  /* TAMP registers zone 3 RIF 1 (RW) at 96*/
  #define TAMP_BOOT_CONTEXT		TAMP_BACKUP_REGISTER(96)
-+
-+#define TAMP_FWU_BOOT_IDX_MASK		GENMASK(3, 0)
-+#define TAMP_FWU_BOOT_IDX_OFFSET	0
  #endif /* defined(CONFIG_STM32MP21X) || defined(CONFIG_STM32MP23X) || defined(CONFIG_STM32MP25X) */
  
++#define TAMP_FWU_BOOT_IDX_MASK		GENMASK(3, 0)
++#define TAMP_FWU_BOOT_IDX_OFFSET	0
++
  /* offset used for BSEC driver: misc_read and misc_write */
+ #define STM32_BSEC_SHADOW_OFFSET	0x0
+ #define STM32_BSEC_SHADOW(id)		(STM32_BSEC_SHADOW_OFFSET + (id) * 4)
 diff --git a/board/st/stm32mp2/stm32mp2.c b/board/st/stm32mp2/stm32mp2.c
-index a8b1cdfbaa..e2a9f020f3 100644
+index 8ea962ef10a..bc259fb4613 100644
 --- a/board/st/stm32mp2/stm32mp2.c
 +++ b/board/st/stm32mp2/stm32mp2.c
-@@ -891,3 +891,23 @@ int board_fix_fdt(void *blob)
+@@ -900,3 +900,24 @@ int board_fix_fdt(void *blob)
  }
  #endif /* CONFIG_OF_BOARD_FIXUP */
  
@@ -72,28 +65,7 @@ index a8b1cdfbaa..e2a9f020f3 100644
 +		    TAMP_FWU_BOOT_IDX_OFFSET) & TAMP_FWU_BOOT_IDX_MASK;
 +}
 +#endif /* CONFIG_FWU_MULTI_BANK_UPDATE */
-diff --git a/common/autoboot.c b/common/autoboot.c
-index 5d331991c1..970706af20 100644
---- a/common/autoboot.c
-+++ b/common/autoboot.c
-@@ -447,6 +447,7 @@ const char *bootdelay_process(void)
- {
- 	char *s;
- 	int bootdelay;
-+	u32 boot_idx;
- 
- 	bootcount_inc();
- 
-@@ -472,7 +473,8 @@ const char *bootdelay_process(void)
- 		s = env_get("failbootcmd");
- 	} else
- #endif /* CONFIG_POST */
--	if (bootcount_error())
-+	fwu_plat_get_bootidx(&boot_idx);
-+	if (boot_idx)
- 		s = env_get("altbootcmd");
- 	else
- 		s = env_get("bootcmd");
++
 -- 
 2.34.1
 
