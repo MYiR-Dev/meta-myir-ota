@@ -94,16 +94,12 @@ bitbake update-st-bundle-stm32mp257f-ev1
 More information in [RAUC documentation](https://rauc.readthedocs.io/en/latest/integration.html#bundle-generation)
 
 ### How to put in place the Hawkbit server ?
-Use the docker-compose available in `layers/meta-st/meta-st-ota/files/hawkbit/docker-compose.yml` and run it:
+The latest Hawkbit versions don't include UI because Vaadin 8 hawkBit UI was shut down : more details [here](https://eclipse.dev/hawkbit/blog/2023-11-22-vaadin8_ui_discontinuation/), so please use the v0.4.1 for this demonstration.
 ```
-mkdir hawkbit && cd hawkbit
-cp <Download folder>/docker-compose.yml .
-docker-compose up
+docker run -p 8080:8080 hawkbit/hawkbit-update-server:0.4.1
 ```
-The latest version of Hawkbit dicker-compose is available [here](https://github.com/eclipse-hawkbit/hawkbit/tree/master/docker) (not tested).
 When the server is started, you can connect to its web interface following this URL : http://localhost:8080/UI/login/#/ with Username=admin and Password=admin.
-
-You can register your devices to Hawkbit through the following script that can be customized:
+You can register your devices to Hawkbit through the following script that can be customized (a `sudo` can be needded):
 ```
 curl -X POST \
  http://localhost:8080/rest/v1/targets --user admin:admin \
