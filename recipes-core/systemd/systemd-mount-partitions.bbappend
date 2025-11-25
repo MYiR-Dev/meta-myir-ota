@@ -18,6 +18,6 @@ python set_partitions_list() {
                             d.appendVar('MOUNT_PARTITIONS_LIST', ' ' + items[1] + ',' + items[2])
                         else:
                             bb.debug(1, "Appending '%s-a,%s' to MOUNT_PARTITIONS_LIST." % (items[1], items[2]))
-                            d.appendVar('MOUNT_PARTITIONS_LIST', ' ' + items[1] + '-a' + ',' + items[2])
+                            d.appendVar('MOUNT_PARTITIONS_LIST', ' ' + items[1]  + ',' + items[2])
                     break
 }

@@ -31,13 +31,13 @@ usage = ("Post script to be run :",
 part_prefix = "/dev/disk/by-partlabel/"
 mount_partition_file="/sbin/mount-partitions.sh"
 temp_mount_dir = "/tmp"
-rootfs_dico = {"rootfs-a" : "A", "rootfs-b" : "B"}
+rootfs_dico = {"rootfs" : "A", "rootfs-b" : "B"}
 get_next_boot_slot =  {"A" : "B", "B" : "A"}
 
 # userfs is not managed by A/B mechanism
-part_dico = {"boot"  : {"A" : "bootfs-a", "B" : "bootfs-b"},
-             "vendorfs": {"A" : "vendorfs-a", "B" : "vendorfs-b"},
-             "rootfs"  : {"A" : "rootfs-a", "B" : "rootfs-b"}}
+part_dico = {"boot"  : {"A" : "bootfs", "B" : "bootfs-b"},
+             "vendorfs": {"A" : "vendorfs", "B" : "vendorfs-b"},
+             "rootfs"  : {"A" : "rootfs", "B" : "rootfs-b"}}
 
 #rootfs-b PARTUUID is filled in get_rootfsb_uuid() function
 uuid_dico = {"rootfs"  : {"A" : "e91c4e10-16e6-4c0e-bd0e-77becf4a3582", "B" : "unknown"}}
