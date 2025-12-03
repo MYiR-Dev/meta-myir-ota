@@ -40,7 +40,7 @@ part_dico = {"boot"  : {"A" : "bootfs", "B" : "bootfs-b"},
              "rootfs"  : {"A" : "rootfs", "B" : "rootfs-b"}}
 
 #rootfs-b PARTUUID is filled in get_rootfsb_uuid() function
-uuid_dico = {"rootfs"  : {"A" : "e91c4e10-16e6-4c0e-bd0e-77becf4a3582", "B" : "unknown"}}
+uuid_dico = {"rootfs"  : {"A" : "491f6117-415d-4f53-88c9-6e0de54deac6", "B" : "unknown"}}
 
 boot_part_num_dico = {"A" : 0, "B" : 1}
 
