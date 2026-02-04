@@ -1,0 +1,17 @@
+#Opt	Id	Name	Type	IP	Offset	Binary
+-	0x01	fsbl-boot	Binary	none	0x0	arm-trusted-firmware/tf-a-myb-stm32mp135x-512m-optee-programmer-usb_Encrypted_Signed.stm32
+-	0x03	fip-boot	FIP	none	0x0	fip/fip-myb-stm32mp135x-512m-optee-emmc_Encrypted_Signed.bin
+P	0x04	fsbl1	Binary	mmc1	boot1	arm-trusted-firmware/tf-a-myb-stm32mp135x-512m-optee-emmc_Encrypted_Signed.stm32
+P	0x05	fsbl2	Binary	mmc1	boot2	arm-trusted-firmware/tf-a-myb-stm32mp135x-512m-optee-emmc_Encrypted_Signed.stm32
+P	0x06	metadata1	FWU_MDATA	mmc1	0x00080000	arm-trusted-firmware/metadata.bin
+P	0x07	metadata2	FWU_MDATA	mmc1	0x00100000	arm-trusted-firmware/metadata.bin
+P	0x08	fip-a	FIP	mmc1	0x00180000	fip/fip-myb-stm32mp135x-512m-optee-emmc_Encrypted_Signed.bin
+PED	0x09	fip-b	FIP	mmc1	0x00580000	none
+PED	0x0A	u-boot-env	ENV	mmc1	0x00980000	none
+P	0x10	bootfs		System	mmc1	0x00A00000	st-image-bootfs-openstlinux-weston-myd-yf13f.bootfs.ext4
+PED	0x11	bootfs-b	System	mmc1	0x02E00000	none
+P	0x12	vendorfs	FileSystem	mmc1	0x05200000	st-image-vendorfs-openstlinux-weston-myd-yf13f.vendorfs.ext4
+PED	0x13	vendorfs-b	FileSystem	mmc1	0x06200000	none
+P	0x14	rootfs		FileSystem	mmc1	0x07200000	myir-image-full-openstlinux-weston-myd-yf13f.rootfs.ext4
+PED	0x15	rootfs-b	FileSystem	mmc1	0xC7200000	none
+P	0x16	userfs	FileSystem	mmc1	0x187200000	myir-image-full-userfs-openstlinux-weston-myd-yf13f.userfs.ext4
