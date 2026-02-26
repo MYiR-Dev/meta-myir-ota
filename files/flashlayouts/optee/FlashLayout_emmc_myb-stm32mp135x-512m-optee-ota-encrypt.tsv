@@ -13,5 +13,5 @@ PED	0x11	bootfs-b	System	mmc1	0x02E00000	none
 P	0x12	vendorfs	FileSystem	mmc1	0x05200000	st-image-vendorfs-openstlinux-weston-myd-yf13f.vendorfs.ext4
 PED	0x13	vendorfs-b	FileSystem	mmc1	0x06200000	none
 P	0x14	rootfs		FileSystem	mmc1	0x07200000	myir-image-full-openstlinux-weston-myd-yf13f.rootfs.ext4
-PED	0x15	rootfs-b	FileSystem	mmc1	0xC7200000	none
-P	0x16	userfs	FileSystem	mmc1	0x187200000	myir-image-full-userfs-openstlinux-weston-myd-yf13f.userfs.ext4
+PED	0x15	rootfs-b	FileSystem	mmc1	0x73E00000	none
+P	0x16	userfs	FileSystem	mmc1	0xE0A00000	myir-image-full-userfs-openstlinux-weston-myd-yf13f.userfs.ext4
